@@ -6,6 +6,7 @@ class GraphState(TypedDict):
     query_type: str
     subtype : str
     intent : List[str]
+    similar_query : List[str]
     t2c_for_search : str
     record_dict_lst : List[Dict]
     messages : List[Dict]

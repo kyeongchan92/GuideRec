@@ -23,6 +23,8 @@ embedding_model = get_embedding_model()  # 초기화된 모델을 재사용
 
 def get_store_candidates(llm, graphdb_driver, store_retriever_rev_emb, store_retriever_grp_emb, state:GraphState):
     print(f"Get Store Candidates".ljust(100, '='))
+    print(f"state : {state}")
+    
     candidate_str = ''
     intent = state['intent']
     ig = IntentGuide()

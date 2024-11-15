@@ -1,7 +1,11 @@
+from llm_response.langgraph_graph_state import GraphState
 from neo4j import GraphDatabase
 import os
 from config import CONFIG
 import timeit
+import streamlit as st
+
+
 
 graphdb_driver = GraphDatabase.driver(uri=CONFIG.neo4j_url, 
                                       auth=(
@@ -40,5 +44,44 @@ class DotDict(dict):
 
 
 
+# Add example query buttons
+def add_recomm_query(state:GraphState=None) :
+    def add_query(example_query):
+        st.session_state.messages.append({"role": "user", "content": example_query})
+    
+
+    print("state : ", state)
+    if state is None :
+        query1, query2 = get_init_recomm_query()
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button(query1):
+                query = query1
+                add_query(query)
 
 
+        with col2:
+            if st.button(query2):
+                query = query2
+                add_query(query)
+    else : 
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button(state['similar_query']):
+                print("state['similar_query'] : ", state['similar_query'])
+                query = state['similar_query']
+                add_query(query)
+
+
+        with col2:
+            if st.button(state['similar_query']):
+                query = state['similar_query']
+                add_query(query)
+
+    return query
+
+def get_init_recomm_query() :
+    example_query1 = "60대 부모님과 가기 좋은 애월읍 흑돼지 맛집 추천해줘"
+    example_query2 = "5살 아이와 함께 3인 가족이 가기 좋은 제주 신화월드와 가까운 한식당 추천해줘"
+    return example_query1, example_query2

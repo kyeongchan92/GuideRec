@@ -8,8 +8,11 @@ from langchain_core.output_parsers import StrOutputParser
 from llm_response.make_response import get_llm_response
 from llm_response.langgraph_app import app, GraphState
 from langchain_core.runnables import RunnableConfig
+from utils import add_recomm_query, get_init_recomm_query
 
 
+
+    
 st.title("혼저 옵서예!👋")
 st.subheader("\"잘도 맛있수다!\"가 절로 나오는 제주도 맛집 추천 🍊")
 st.write("")
@@ -21,6 +24,8 @@ with st.sidebar:
 # Store LLM generated responses
 if "messages" not in st.session_state.keys():
     st.session_state.messages = [{"role": "assistant", "content": "어드런 식당 찾으시쿠과?"}]
+    query = add_recomm_query()
+
 
 # Display or clear chat messages
 for message in st.session_state.messages:
@@ -31,11 +36,22 @@ def clear_chat_history():
     st.session_state.messages = [{"role": "assistant", "content": "어드런 식당 찾으시쿠과?"}]
 st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
 
-if query := st.chat_input("Say something"):
+
+
+    
+if user_query := st.chat_input("Say something"):
+    if user_query :
+        query = user_query
     st.session_state.messages.append({"role": "user", "content": query})
+
+try:
+    query  # query 변수가 존재하는지 확인
+except NameError:
+    query = None
+
+if query :
     with st.chat_message("user"):
         st.write(query)
-
 
 config = RunnableConfig(recursion_limit=10, configurable={"thread_id": "movie"})
 if st.session_state.messages[-1]["role"] != "assistant":
@@ -44,6 +60,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
             # LangGraph
             gs = GraphState(query=query, messages=st.session_state.messages)
             result_gs = app.invoke(gs, config=config)
+            add_recomm_query(result_gs)
             placeholder = st.empty()
 
     if result_gs['final_answer']:

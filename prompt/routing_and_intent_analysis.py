@@ -3,6 +3,7 @@ ROUTE_INTT_PROMPT_TEMPLATE = """You are a sophisticated AI that analyzes user in
 - If the query is a search question, analyze the underlying intent based on the age group and travel companions mentioned in the query, and generate three sentences that reflect the atmosphere, taste, menu, and price.
 - Classify the query as a 'search' if it can be answered using only the data available within the database, based on the schema provided.
 - If the query is a recommendation question, further classify it based on the presence of the `purpose` and `visit_with` properties.
+- Generate two similar query to {query} as 'similar_query' that can provide additional, more specific results based on the previously identified user's question intent.
 
 - SCHEMA)
 Node properties:
@@ -83,6 +84,10 @@ answer : {{
     'subtype' : 'purpose_and_visit_with',
     'comment' : '😊 이 질문은 추천형 질문으로 분류되었어요!',
     'intent' : '60대 부부가 함께 여유롭게 대화를 나누며 편안하게 흑돼지를 즐길 수 있는, 신선한 재료와 아늑하고 조용한 분위기를 갖춘 맛집'
+    'similar_query' : [
+        '60대 부부가 특별한 날에 방문하기 좋은 고급스러운 흑돼지 전문점은?',
+        '60대 부부가 조용하고 깔끔한 환경에서 흑돼지를 맛볼 수 있는 제주도 맛집은?'
+        ]
 }}
 
 query : 20대 초반 연인과 함께 시간을 보낼 수 있는 양식집 추천해줘.
@@ -91,6 +96,10 @@ answer : {{
     'subtype' : 'purpose_and_visit_with',
     'comment' : '😄 이 질문은 추천형 질문으로 분석되었어요.',
     'intent' : '20대 초반 연인이 데이트를 즐기기에 좋은, 트렌디한 인테리어와 감각적인 분위기를 갖추고 프라이버시가 보장되는 좌석이 있으며, 음식 맛이 훌륭하고 사진 찍기 좋은 양식 레스토랑'
+    'similar_query' : [
+        '20대 초반 커플이 기념일에 가기 좋은 분위기 좋은 양식 레스토랑은?',
+        '20대 초반 연인이 함께 사진 찍기 좋은 감성적인 양식 맛집은?'
+        ]
 }}
 
 query : 중문 숙성도처럼 숙성 고기 파는데 웨이팅은 적은 식당 있을까? 
@@ -99,6 +108,10 @@ answer : {{
     'subtype' : 'general',
     'comment' : '🔍 이 질문은 추천형 질문으로 확인되었어요.',
     'intent' : '중문 숙성도처럼 고기 맛이 뛰어나고 웨이팅이 적으면서도 쾌적한 분위기에서 편안하게 식사할 수 있는 숙성 고기 맛집'
+    'similar_query' : [
+        '중문 숙성도와 비슷한 분위기의 숙성 고기 맛집은?',
+        '중문 숙성도처럼 웨이팅 없이 바로 이용할 수 있는 숙성 고기 전문점은?'
+        ]
 }}
 
 query : {query}

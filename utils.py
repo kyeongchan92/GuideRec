@@ -45,43 +45,57 @@ class DotDict(dict):
 
 
 # Add example query buttons
-def add_recomm_query(state:GraphState=None) :
+def add_recomm_query(state:GraphState=None):
     def add_query(example_query):
         st.session_state.messages.append({"role": "user", "content": example_query})
     
-
     print("state : ", state)
+
     if state is None :
         query1, query2 = get_init_recomm_query()
         col1, col2 = st.columns(2)
         with col1:
             if st.button(query1):
-                query = query1
-                add_query(query)
-
-
+                print(f"사전질문1 들어옴!!")
+                print(f"messages add 전! : {st.session_state.messages}")
+                add_query(query1)
+                st.session_state.clicked_recomm_query = query1
+                print(f"messages add 후! : {st.session_state.messages}")
+                st.session_state.query = query1
         with col2:
             if st.button(query2):
-                query = query2
-                add_query(query)
+                print(f"사전질문2 들어옴!!")
+                print(f"messages add 전! : {st.session_state.messages}")
+                add_query(query2)
+                st.session_state.clicked_recomm_query = query2
+                print(f"messages add 후! : {st.session_state.messages}")
+                st.session_state.query = query2
     else : 
         col1, col2 = st.columns(2)
-
         with col1:
-            if st.button(state['similar_query']):
-                print("state['similar_query'] : ", state['similar_query'])
-                query = state['similar_query']
-                add_query(query)
-
-
+            query1 = state['similar_query'][0]
+            if st.button(query1):
+                print(f"생성된질문1 들어옴!!")
+                print(f"messages add 전! : {st.session_state.messages}")
+                add_query(query1)
+                st.session_state.clicked_recomm_query = query1
+                print(f"messages add 후! : {st.session_state.messages}")
+                st.session_state.query = query1
         with col2:
-            if st.button(state['similar_query']):
-                query = state['similar_query']
-                add_query(query)
+            query2 = state['similar_query'][1]
+            if st.button(query2):
+                print(f"생성된질문2 들어옴!!")
+                print(f"messages add 전! : {st.session_state.messages}")
+                add_query(query2)
+                st.session_state.clicked_recomm_query = query2
+                print(f"messages add 후! : {st.session_state.messages}")
+                st.session_state.query = query2
+        
+        
 
-    return query
 
 def get_init_recomm_query() :
     example_query1 = "60대 부모님과 가기 좋은 애월읍 흑돼지 맛집 추천해줘"
-    example_query2 = "5살 아이와 함께 3인 가족이 가기 좋은 제주 신화월드와 가까운 한식당 추천해줘"
+    # example_query2 = "5살 아이와 함께 3인 가족이 가기 좋은 제주 신화월드와 가까운 한식당 추천해줘"
+    example_query2 = "애월읍에서 60대가 가장 많이 가는 카페는?"
     return example_query1, example_query2

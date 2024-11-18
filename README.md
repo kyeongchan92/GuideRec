@@ -2,6 +2,12 @@
 
 > python 3.10 이상
 
+### 실행 방법
+```
+streamlit run app.py
+```
+
+
 ## DB SCHEMA
 
 <p align="center">

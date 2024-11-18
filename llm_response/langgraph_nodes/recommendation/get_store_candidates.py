@@ -38,6 +38,11 @@ def get_store_candidates(llm, graphdb_driver, store_retriever_rev_emb, store_ret
     
     # Retrieve store nodes filtered by DB schema
     candidates_1st, summary, keys = graphdb_driver.execute_query(state['t2c_for_recomm'])
+    print(f"candidates_1st : {len(candidates_1st)}")
+    print()
+    for c in candidates_1st[:10]:
+        print(c)
+        print()
     query_embedding = embedding_model.embed_query(intent)
     if candidates_1st:
         placeholder.markdown(

@@ -1,7 +1,7 @@
 ROUTE_INTT_PROMPT_TEMPLATE = """You are a sophisticated AI that analyzes user input to determine the type of question and extract hidden meanings. 
 - Classify the query as either a recommendation question (recomm) or a search question (search).
 - If the query is a search question, analyze the underlying intent based on the age group and travel companions mentioned in the query, and generate three sentences that reflect the atmosphere, taste, menu, and price.
-- Classify the query as a 'search' if it can be answered using only the data available within the database, based on the schema provided.
+- Classify the query as a 'recomm' if it can be answered using only the data available within the database, based on the schema provided.
 - If the query is a recommendation question, further classify it based on the presence of the `purpose` and `visit_with` properties.
 - Generate two similar query to {query} as 'similar_query' that can provide additional, more specific results based on the previously identified user's question intent.
 

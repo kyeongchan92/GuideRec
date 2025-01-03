@@ -6,6 +6,10 @@
 
 주제는 'LLM활용 제주도 맛집 추천 대화형 AI서비스 개발'입니다.
 
+데모 영상 : https://drive.google.com/file/d/1djLocGtKmpJpuCyxZjOIDgiOfXnb3kdo/view
+
+발표 자료 : https://drive.google.com/file/d/1-m3aU0PjJ5X7BsHo-WszG2m0VzqeocyC/view
+
 ### 실행 방법
 💡 레포지토리 최상단 경로에 ```.env``` 파일이 존재해야합니다. 
 ```
@@ -17,10 +21,7 @@ streamlit run app.py
 
 
 ## DB SCHEMA
-
-<p align="center">
-<img width="70%" alt="DB_SCHEMA" src="https://github.com/user-attachments/assets/9130ad7b-260a-4d32-8ce4-3ced6b46a3fd"
-</p>
+![alt text](<images/graph data modeling.png>)
 
 ## Pipeline
 ![pipeline](./images/pipeline_final.png)

@@ -65,14 +65,13 @@ if query := st.chat_input("Say something"):
         st.write(query)
 
 
-config = RunnableConfig(recursion_limit=10, configurable={"thread_id": "movie"})
+config = RunnableConfig(recursion_limit=20, configurable={"thread_id": "movie"})
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             # LangGraph
             gs = GraphState(query=st.session_state.query, messages=st.session_state.messages)
             result_gs = app.invoke(gs, config=config)
-            st.session_state.similar_query = result_gs['similar_query']
             # add_recomm_query(result_gs)
             placeholder = st.empty()
 

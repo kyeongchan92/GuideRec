@@ -5,12 +5,19 @@ from graphrag.graph_search import get_neo4j_vector_graph
 from llm_response.conditional_decision.route_query import is_search_query
 from llm_response.get_llm_model import get_llm_model
 from llm_response.langgraph_graph_state import GraphState
+from llm_response.langgraph_nodes.agent.attraction_cypher import attraction_cypher
+from llm_response.langgraph_nodes.agent.build_final_cypher_from_parts import build_final_cypher_from_parts
+from llm_response.langgraph_nodes.agent.field_detection import field_detection
+from llm_response.langgraph_nodes.agent.location_cypher import location_cypher
+from llm_response.langgraph_nodes.agent.menu_cypher import menu_cypher
+from llm_response.langgraph_nodes.agent.price_cypher import price_cypher
+from llm_response.langgraph_nodes.agent.restaurant_name_cypher import restaurant_name_cypher
 from llm_response.langgraph_nodes.recommendation.final_formatting_for_recomm import final_formatting_for_recomm
 from llm_response.langgraph_nodes.search.final_formatting import final_formatting_for_search
 from llm_response.langgraph_nodes.recommendation.selecting import final_selecting_for_recomm
 from llm_response.langgraph_nodes.recommendation.get_store_candidates import get_store_candidates
 from llm_response.langgraph_nodes.search.retrieve_for_search_cypher import retrieve_for_search_cypher
-from llm_response.langgraph_nodes.routing.route_and_intent_analysis import route_and_intent_analysis
+from llm_response.langgraph_nodes.intent_analysis.rewrite import rewrite
 from langgraph.graph import END
 from utils import graphdb_driver
 from config import CONFIG
@@ -23,13 +30,23 @@ store_retriever_grp_emb = get_neo4j_vector_graph().as_retriever(search_kwargs={"
 workflow = StateGraph(GraphState)
 
 # Nodes
-## Routing & intent analysis node
-workflow.add_node("route_and_intent_analysis", lambda state: route_and_intent_analysis(llm, state))
+## Rewrite
+workflow.add_node("rewrite", lambda state: rewrite(llm, state))
+
+# Field Detection
+workflow.add_node("field_detection", lambda state: field_detection(llm, state))
+workflow.add_node("restaurant_name_cypher", lambda state: restaurant_name_cypher(llm, state))
+workflow.add_node("price_cypher", lambda state: price_cypher(llm, state))
+workflow.add_node("location_cypher", lambda state: location_cypher(llm, state))
+workflow.add_node("menu_cypher", lambda state: menu_cypher(llm, state))
+workflow.add_node("attraction_cypher", lambda state: attraction_cypher(llm, state))
+workflow.add_node("build_final_cypher_from_parts", lambda state: build_final_cypher_from_parts(llm, state))
+
 
 ## Search query nodes
-workflow.add_node("text_to_cypher_for_search", lambda state: text_to_cypher_for_search(llm, state))
-workflow.add_node("retrieve_for_search_cypher", lambda state: retrieve_for_search_cypher(graphdb_driver, state))
-workflow.add_node("final_formatting_for_search", lambda state: final_formatting_for_search(llm, graphdb_driver, state))
+# workflow.add_node("text_to_cypher_for_search", lambda state: text_to_cypher_for_search(llm, state))
+# workflow.add_node("retrieve_for_search_cypher", lambda state: retrieve_for_search_cypher(graphdb_driver, state))
+# workflow.add_node("final_formatting_for_search", lambda state: final_formatting_for_search(llm, graphdb_driver, state))
 
 ## Recomm query nodes
 workflow.add_node("get_store_candidates", lambda state: get_store_candidates(llm, graphdb_driver, store_retriever_rev_emb, store_retriever_grp_emb, state))
@@ -37,25 +54,27 @@ workflow.add_node("final_selecting_for_recomm", lambda state: final_selecting_fo
 workflow.add_node("final_formatting_for_recomm", lambda state: final_formatting_for_recomm(graphdb_driver, state))
 
 # Edges
-## Conditional edges
-workflow.add_conditional_edges(
-    'route_and_intent_analysis',
-    is_search_query,
-    {
-        'YES': 'text_to_cypher_for_search',
-        'NO': 'get_store_candidates',
-    }
-)
+# Agent
+workflow.add_edge('rewrite', 'field_detection')
+
+workflow.add_edge("field_detection", "restaurant_name_cypher")
+workflow.add_edge("restaurant_name_cypher", "price_cypher")
+workflow.add_edge("price_cypher", "location_cypher")
+workflow.add_edge("location_cypher", "menu_cypher")
+workflow.add_edge("menu_cypher", "attraction_cypher")
+workflow.add_edge("attraction_cypher", "build_final_cypher_from_parts")
+workflow.add_edge("build_final_cypher_from_parts", "get_store_candidates")
 
 ## Search
-workflow.add_edge('text_to_cypher_for_search', 'retrieve_for_search_cypher')
-workflow.add_edge('retrieve_for_search_cypher', 'final_formatting_for_search')
-workflow.add_edge('final_formatting_for_search', END)
+# workflow.add_edge('text_to_cypher_for_search', 'retrieve_for_search_cypher')
+# workflow.add_edge('retrieve_for_search_cypher', 'final_formatting_for_search')
+# workflow.add_edge('final_formatting_for_search', END)
 
 ## Recomm
 workflow.add_edge('get_store_candidates', 'final_selecting_for_recomm')
 workflow.add_edge('final_selecting_for_recomm', 'final_formatting_for_recomm')
 workflow.add_edge('final_formatting_for_recomm', END)
 
-workflow.set_entry_point("route_and_intent_analysis")
+workflow.set_entry_point("rewrite")
+
 app = workflow.compile()

@@ -8,7 +8,7 @@ def final_selecting_for_recomm(llm, state: GraphState):
 
    prompt = FINAL_SELECTING_FOR_RECOMM_v2.format(
    query=state['query'], 
-   intent=state['intent'],
+   intent=state['rewritten_query'],
    candidates=state['candidate_str']
    )
 

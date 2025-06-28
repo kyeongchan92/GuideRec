@@ -26,7 +26,7 @@ def get_store_candidates(llm, graphdb_driver, store_retriever_rev_emb, store_ret
     print(f"state : {state}")
     
     candidate_str = ''
-    intent = state['intent']
+    intent = state['rewritten_query']
     ig = IntentGuide()
     ig.add(f"<li style='margin-bottom: 8px;'>{convert_markdown_to_html(intent)}</li>")
 
@@ -73,11 +73,12 @@ def get_store_candidates(llm, graphdb_driver, store_retriever_rev_emb, store_ret
             f"> {len(candidates_1st) + lack_num}개의 후보 탐색 중...",
             unsafe_allow_html=True,
         )
-        if state['subtype'] == 'purpose_and_visit_with' :
-            review_retrieval = store_retriever_grp_emb.invoke(state['intent'])
+        # if state['subtype'] == 'purpose_and_visit_with' :
+        if True:
+            review_retrieval = store_retriever_grp_emb.invoke(state['rewritten_query'])
             rev_num, grp_num = calculate_numbers(lack_num)
         else : 
-            review_retrieval = store_retriever_rev_emb.invoke(state['intent'])
+            review_retrieval = store_retriever_rev_emb.invoke(state['rewritten_query'])
             rev_num, grp_num = 6, 0
         
 
@@ -86,7 +87,8 @@ def get_store_candidates(llm, graphdb_driver, store_retriever_rev_emb, store_ret
             candidates=review_retrieval, 
             query_embedding=query_embedding, 
             graphdb_driver=graphdb_driver, 
-            subtype=state['subtype'], 
+            # subtype=state['subtype'], 
+            subtype='purpose_and_visit_with', 
             rev_num=rev_num, 
             grp_num=grp_num, 
             review_k=2)

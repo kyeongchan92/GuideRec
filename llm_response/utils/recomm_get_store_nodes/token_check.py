@@ -7,7 +7,7 @@ def token_check(candidate_str, state, llm, placeholder):
     while True:
         prompt = FINAL_SELECTING_FOR_RECOMM_v2.format(
             query=state['query'], 
-            intent=state['intent'],
+            intent=state['rewritten_query'],
             candidates='\n\n'.join(candidates_lst[:num_candidates])
         )
         

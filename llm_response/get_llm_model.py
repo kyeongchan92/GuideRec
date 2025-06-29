@@ -3,14 +3,23 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from config import CONFIG
 
 
+# def get_llm_model():
+#     llm = ChatGoogleGenerativeAI(
+#         model="gemini-1.5-flash",
+#         temperature=0,
+#         max_tokens=None,
+#         timeout=None,
+#         max_retries=2,
+#         api_key=CONFIG.gemini_api_key
+#     )
+#     return llm
+
+from langchain.chat_models import ChatOpenAI
+
 def get_llm_model():
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-1.5-flash",
+    llm = ChatOpenAI(
+        model="gpt-3.5-turbo",
         temperature=0,
-        max_tokens=None,
-        timeout=None,
-        max_retries=2,
-        api_key=CONFIG.gemini_api_key
+        api_key=os.environ["KYEONGCHAN_OPENAI_API_KEY"]
     )
     return llm
-

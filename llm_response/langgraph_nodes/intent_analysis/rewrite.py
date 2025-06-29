@@ -10,8 +10,8 @@ def rewrite(llm, state: GraphState):
         res = llm.invoke(REWRITE_PROMPT.format(query=state["query"]))
     
     # 토큰 수
-    token_info = res.usage_metadata.get("input_tokens", "N/A")
-    st.markdown(f"`🔢 Token Count:` {token_info}")
+    # token_info = res.usage_metadata.get("input_tokens", "N/A")
+    # st.markdown(f"`🔢 Token Count:` {token_info}")
 
     # LLM 응답
     st.markdown("**Raw LLM Response:**")

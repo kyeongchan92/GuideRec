@@ -11,7 +11,7 @@ def text_to_cypher_for_search(llm, state:GraphState):
             query=state['query']
             )
     )
-    print(f"# input_tokens count : {response.usage_metadata['input_tokens']}")
+    # print(f"# input_tokens count : {response.usage_metadata['input_tokens']}")
     cypher = response.content.replace('```', '').replace('cypher', '').strip()
     # print(f"{cypher}")
     

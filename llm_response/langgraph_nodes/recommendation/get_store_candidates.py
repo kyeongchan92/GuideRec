@@ -96,7 +96,8 @@ def get_store_candidates(llm, graphdb_driver, store_retriever_rev_emb, store_ret
     
 
     # Token check
-    state["candidate_str"] = token_check(candidate_str, state, llm, placeholder)
+    candidates_lst = candidate_str.strip().split('\n\n')
+    state["candidate_str"] = '\n\n'.join(candidates_lst[:10])
     place_holder_str = ''
     placeholder.markdown(place_holder_str, unsafe_allow_html=True)
 

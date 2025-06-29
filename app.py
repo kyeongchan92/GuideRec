@@ -69,12 +69,46 @@ config = RunnableConfig(recursion_limit=20, configurable={"thread_id": "movie"})
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
-            # LangGraph
+            # LangGraph 실행
             gs = GraphState(query=st.session_state.query, messages=st.session_state.messages)
             result_gs = app.invoke(gs, config=config)
-            # add_recomm_query(result_gs)
-            placeholder = st.empty()
 
-    if result_gs['final_answer']:
-        message = {"role": "assistant", "content": result_gs['final_answer']}
-        st.session_state.messages.append(message)
+        # 결과 메시지 출력
+        if result_gs['final_answer']:
+            st.markdown(result_gs['final_answer'], unsafe_allow_html=True)
+            st.session_state.messages.append({"role": "assistant", "content": result_gs['final_answer']})
+
+        # ===== 🔍 Cypher 쿼리 & 그래프 시각화 =====
+        if 't2c_for_recomm' in result_gs:
+            st.markdown("## 🧠 생성된 Cypher 쿼리")
+            st.code(result_gs['t2c_for_recomm'], language="cypher")
+
+            from neo4j.graph import Node, Relationship
+            from pyvis.network import Network
+            import streamlit.components.v1 as components
+            from utils import graphdb_driver
+
+            def run_cypher_and_extract_elements(graphdb_driver, cypher: str):
+                result = graphdb_driver.execute_query(cypher)
+                nodes = set()
+                edges = []
+                for record in result.records:
+                    for value in record.values():
+                        if isinstance(value, Node):
+                            nodes.add(value)
+                        elif isinstance(value, Relationship):
+                            edges.append((value.start_node.id, value.end_node.id, value.type))
+                return list(nodes), edges
+
+            def draw_graph_pyvis(nodes, edges):
+                net = Network(height="600px", width="100%", notebook=False)
+                for node in nodes:
+                    net.add_node(node.id, label=node.get("MCT_NM") or node.get("name") or str(node.id), title=str(dict(node)))
+                for start, end, rel in edges:
+                    net.add_edge(start, end, label=rel)
+                net.save_graph("graph.html")
+                components.html(open("graph.html", "r", encoding="utf-8").read(), height=650)
+
+            st.markdown("## 🕸️ 탐색된 그래프 시각화")
+            nodes, edges = run_cypher_and_extract_elements(graphdb_driver, result_gs['t2c_for_recomm'])
+            draw_graph_pyvis(nodes, edges)

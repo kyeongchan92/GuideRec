@@ -2,7 +2,7 @@ from llm_response.langgraph_graph_state import GraphState
 from prompt.cypher_tools.restaurant_name import RESTAURANT_NAME_CYPHER_PROMPT
 
 def restaurant_name_cypher(llm, state: GraphState) -> GraphState:
-    if state.get("restaurant_name_mentioned") != "yes":
+    if state.get("restaurant_name_mentioned") != "":
         state.setdefault("field_conditions_summary", {})["restaurant_name"] = "❌ not mentioned"
         return state
 

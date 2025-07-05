@@ -13,10 +13,6 @@ def rewrite(llm, state: GraphState):
     # token_info = res.usage_metadata.get("input_tokens", "N/A")
     # st.markdown(f"`🔢 Token Count:` {token_info}")
 
-    # LLM 응답
-    st.markdown("**Raw LLM Response:**")
-    st.code(res.content, language="json")
-
     try:
         res_json = eval(res.content.replace("```", "").replace("json", ""))
     except Exception as e:

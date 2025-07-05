@@ -6,7 +6,7 @@ import streamlit as st
 def field_detection(llm, state: GraphState) -> GraphState:
     st.markdown("## 🧠 Field Detection")
     
-    query = state.get("rewritten_query") or state["query"]
+    query = state["query"]
     st.markdown(f"**Query**: `{query}`")
 
     prompt = FIELD_DETECTION_PROMPT.format(query=query)
